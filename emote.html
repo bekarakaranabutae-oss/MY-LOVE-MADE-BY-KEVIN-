@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>KEVIN TAAKE 🇰🇮_developer</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --bg-1:#061028; --bg-2:#071428; --card:#071827;
+  --accent:#4a9eff; --accent-2:#2a5ba0; --muted:#a8bbdd;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;font-family:Inter,system-ui,Roboto,Arial;
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(74,158,255,0.06), transparent),
+              linear-gradient(180deg,var(--bg-1) 0%, var(--bg-2) 100%);
+  color:#e6eefc;padding:30px 20px;min-height:100vh;
+}
+
+/* layout */
+.container{max-width:1200px;margin:0 auto;}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.logo{display:flex;align-items:center;gap:14px;animation:logo-float 3s ease-in-out infinite;}
+.logo i{font-size:34px;color:var(--accent)}
+.logo h1{margin:0;font-size:28px;color:var(--accent);font-weight:800}
+
+/* admin btn */
+.header-actions{display:flex;align-items:center;gap:10px}
+.admin-btn{background:transparent;border:1px solid rgba(74,158,255,0.08);padding:8px 10px;border-radius:8px;color:var(--muted);cursor:pointer}
+.admin-btn.logged{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent}
+
+/* cards */
+.row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:880px){.row{grid-template-columns:1fr}}
+.card{background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:18px;border:1px solid rgba(74,158,255,0.06);box-shadow: 0 6px 30px rgba(5,10,20,0.6);backdrop-filter: blur(6px)}
+.card-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(74,158,255,0.03)}
+.card-header h3{margin:0;font-size:16px;color:#eaf3ff}
+
+/* inputs */
+.form-group{margin-bottom:12px}
+.form-control{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(74,158,255,0.12);background:linear-gradient(180deg, rgba(5,12,22,0.6), rgba(7,20,34,0.6));color:var(--muted);outline:none;font-size:14px}
+.form-control:focus{box-shadow:0 6px 20px rgba(74,158,255,0.08);border-color:var(--accent)}
+
+/* emote grid */
+.emote-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.emote-box{padding:10px;border-radius:10px;text-align:center;border:1px solid rgba(74,158,255,0.05);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));transition:transform .12s ease}
+.emote-box p{margin:0 0 10px 0;font-weight:700;color:#e3f0ff;font-size:13px}
+.emote-btn{padding:8px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:white;font-weight:700;cursor:pointer;font-size:13px;box-shadow:0 8px 18px rgba(42,91,160,0.12)}
+.emote-btn:active{transform:scale(.98)}
+.emote-box:hover{transform:translateY(-6px)}
+
+/* glow */
+.glow{position:fixed;right:-120px;bottom:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(74,158,255,0.12), rgba(42,91,160,0.02));filter:blur(60px);pointer-events:none;z-index:0}
+.glow.top{left:-180px;top:-160px;background:radial-gradient(circle at 50% 30%, rgba(42,91,160,0.12), rgba(74,158,255,0.02))}
+
+/* login */
+#login-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.7));z-index:9999}
+#login-box{width:360px;background:linear-gradient(180deg, rgba(7,18,30,0.95), rgba(5,12,22,0.95));padding:26px;border-radius:12px;border:1px solid rgba(74,158,255,0.08);box-shadow:0 24px 60px rgba(2,6,20,0.8)}
+#login-box h2{color:var(--accent);text-align:center;margin-bottom:14px}
+#login-box input{width:100%;padding:12px;margin-bottom:10px;border-radius:10px;border:1px solid rgba(74,158,255,0.08);background:transparent;color:var(--muted)}
+#login-box button{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-weight:700}
+
+/* spinner */
+.btn-spinner{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.btn-spinner .spinner{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);border-top-color:white;animation:spin .9s linear infinite;display:none}
+.btn-loading .spinner{display:inline-block}
+
+/* toast */
+.toast{position:fixed;right:18px;top:18px;background:rgba(4,10,20,0.9);padding:12px 14px;border-radius:10px;border:1px solid rgba(74,158,255,0.06);box-shadow:0 8px 30px rgba(2,6,20,0.6);color:#e9f4ff;font-weight:700;z-index:99999;opacity:0;transform:translateY(-6px);transition:opacity .18s ease, transform .18s ease}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{border-color:rgba(76,175,80,0.12)}
+.toast.error{border-color:rgba(244,67,54,0.12)}
+
+/* admin modal */
+#admin-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.7));z-index:10000}
+#admin-box{width:420px;background:linear-gradient(180deg, rgba(7,18,30,0.98), rgba(5,12,22,0.98));padding:20px;border-radius:12px;border:1px solid rgba(74,158,255,0.08);box-shadow:0 24px 60px rgba(2,6,20,0.8)}
+#admin-box h3{color:var(--accent);margin:0 0 10px 0}
+.admin-row{display:flex;gap:8px;margin-bottom:10px}
+.admin-row input{flex:1}
+.small-muted{font-size:12px;color:var(--muted);margin-top:6px}
+
+/* misc */
+.hint{font-size:13px;color:var(--muted)}
+.sep{height:10px}
+
+/* anim */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes logo-float{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+@media(max-width:420px){#login-box{width:92%}#admin-box{width:92%}}
+</style>
+</head>
+<body>
+<div class="glow top"></div>
+<div class="glow"></div>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" aria-hidden="false">
+  <div id="login-box" role="dialog" aria-label="Login">
+    <h2>KEVIN TAAKE 🇰🇮_developer</h2>
+    <input id="login-user" placeholder="Username" type="text" autocomplete="username" />
+    <input id="login-pass" placeholder="Password" type="password" autocomplete="current-password" />
+    <button id="login-btn">Login</button>
+    <p class="hint">Get user/pass from our Telegram channel: <a href="https://t.me/FreeFireLikeOfficialChannel" target="_blank" style="color:var(--accent)">KEVIN TAAKE 🇰🇮_developer</a></p>
+  </div>
+</div>
+
+<div class="container" id="app" aria-hidden="true">
+  <header>
+    <div class="logo"><i class="fas fa-robot"></i><h1>KEVIN TAAKE 🇰🇮_developer</h1></div>
+    <div class="header-actions">
+      <button id="admin-open-btn" class="admin-btn" title="Admin Panel"><i class="fas fa-shield-alt"></i></button>
+    </div>
+  </header>
+
+  <div class="row">
+    <!-- TEAM CODE -->
+    <div class="card">
+      <div class="card-header"><i class="fas fa-code"></i><h3>Team Code</h3></div>
+      <div class="form-group"><input id="teamcode" class="form-control" placeholder="Enter Team Code" /></div>
+    </div>
+
+    <!-- UIDs -->
+    <div class="card">
+      <div class="card-header"><i class="fas fa-users"></i><h3>UIDs</h3></div>
+      <div class="form-group"><input id="uid1" class="form-control" placeholder="UID 1"></div>
+      <div class="form-group"><input id="uid2" class="form-control" placeholder="UID 2"></div>
+      <div class="form-group"><input id="uid3" class="form-control" placeholder="UID 3"></div>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top:12px">
+    <!-- EVO EMOTES -->
+    <div class="card" aria-live="polite">
+      <div class="card-header"><i class="fas fa-fire"></i><h3>EVO EMOTES</h3></div>
+      <div class="emote-grid" id="evo-list"></div>
+    </div>
+
+    <!-- NORMAL EMOTES -->
+    <div class="card">
+      <div class="card-header"><i class="fas fa-face-smile"></i><h3>NORMAL EMOTES</h3></div>
+      <div class="emote-grid" id="normal-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- toast -->
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Admin Modal -->
+<div id="admin-modal" role="dialog" aria-hidden="true">
+  <div id="admin-box">
+    <h3>Admin Panel</h3>
+
+    <div id="admin-login-area">
+      <div class="admin-row">
+        <input id="admin-pass" class="form-control" type="password" placeholder="Enter Admin Password" />
+        <button id="admin-login-btn" class="admin-btn">Login</button>
+      </div>
+      <p class="small-muted">Admin password is private — UI-এ দেখানো হয়নি</p>
+    </div>
+
+    <div id="admin-controls" style="display:none;margin-top:8px">
+      <div class="form-group">
+        <label style="display:block;margin-bottom:6px;color:var(--muted)">API Host</label>
+        <div class="admin-row">
+          <input id="admin-api-host" class="form-control" placeholder="http://127.0.0.1:5000" />
+          <button id="admin-save-btn" class="admin-btn">Save</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label style="display:block;margin-bottom:6px;color:var(--muted)">Emote Master Switch</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <label style="font-size:14px;color:var(--muted)"><input type="checkbox" id="admin-enable-emote" /> Enable Emote</label>
+          <button id="admin-logout-btn" class="admin-btn" style="margin-left:auto">Logout</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label style="display:block;margin-bottom:6px;color:var(--muted)">Success Message Override</label>
+        <input id="admin-success-msg" class="form-control" placeholder="emote request success" />
+        <p class="small-muted">সফল হলে যে মেসেজ দেখানো হবে তা কাস্টমাইজ করুন</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------------- Data ---------------- */
+const EVO_EMOTES = [
+  ["EVO P90","909049010"],["EVO M60","909051003"],["EVO MP5","909033002"],["EVO GROZA","909041005"],
+  ["EVO THOMPSON","909038010"],["EVO M10 RED","909039011"],["EVO MP40 BLUE","909040010"],["EVO M10 GREEN","909000081"],
+  ["EVO XM8","909000085"],["EVO AK","909000063"],["EVO MP40","909000075"],["EVO M4A1","909033001"],
+  ["EVO FAMAS","909000090"],["EVO SCAR","909000068"],["EVO UMP","909000098"],["EVO M18","909035007"],
+  ["EVO FIST","909037011"],["EVO G18","909038012"],["EVO AN94","909035012"],["EVO WOODPECKER","909042008"]
+];
+
+const NORMAL_EMOTES = [
+  ["100 Level","909042007"],["Hello!","909000001"],["LOL","909000002"],["Provoke","909000003"],
+  ["Applause","909000004"],["Dab","909000005"],["Chicken","909000006"],["Arm Wave","909000007"],
+  ["Shoot Dance","909000008"],["Baby Shark","909000009"],["Flowers of Love","909000010"],["Mummy Dance","909000011"],
+  ["Push-up","909000012"],["Shuffling","909000013"],["FFWC Throne","909000014"],["Dragon Fist","909000015"],
+  ["Dangerous Game","909000016"],["Jaguar Dance","909000017"],["Threaten","909000018"],["Shake With Me","909000019"],
+  ["Devil's Move","909000020"],["Furious Slam","909000021"],["Moon Flip","909000022"],["Wiggle Walk","909000023"],
+  ["Battle Dance","909000024"],["High Five","909000025"],["Shake It Up","909000026"],["Glorious Spin","909000027"],
+  ["Crane Kick","909000028"],["Party Dance","909000029"],["Jig Dance","909000031"],["Selfie","909000032"],
+  ["Soul Shaking","909000033"],["Pirate's Flag","909000034"],["Healing Dance","909000035"],["Top DJ","909000036"],
+  ["Death Glare","909000037"],["Power of Money","909000038"],["Eat My Dust","909000039"],["Breakdance","909000040"],
+  ["Kungfu","909000041"],["Bon Appetit","909000042"],["Aim; Fire!","909000043"],["The Swan","909000044"],
+  ["I Heart You","909000045"],["Tea Time","909000046"],["Bring It On!","909000047"],["Why? Oh Why?","909000048"],
+  ["Fancy Hands","909000049"],["Shimmy","909000051"],["Doggie","909000052"],["Challenge On!","909000053"],
+  ["Lasso","909000054"],["I'm Rich!","909000055"],["More Practice","909000079"],["FFWS 2021","909000080"],
+  ["Draco's Soul","909000081"],["Good Game","909000082"],["Greetings","909000083"],["The Walker","909000084"],
+  ["Born of Light","909000085"],["Mythos Four","909000086"],["Champion Grab","909000087"],["Win and Chill","909000088"],
+  ["Hadouken","909000089"],["Blood Wraith","909000090"],["Big Smash","909000091"],["Fancy Steps","909000092"],
+  ["All In Control","909000093"],["Debugging","909000094"],["Waggor Wave","909000095"],["Crazy Guitar","909000096"],
+  ["Poof","909000097"],["The Chosen Victor","909000098"],["Challenger","909000099"],["Party Game Emote 5","909000100"],
+  ["Party Game Emote 6","909000101"],["Party Game Emote 3","909000102"],["Party Game Emote 4","909000103"]
+];
+
+/* --------------- Helpers ---------------- */
+function createButton(name,id){
+  const box = document.createElement('div'); box.className='emote-box';
+  const p = document.createElement('p'); p.textContent = name;
+  const btn = document.createElement('button'); btn.className='emote-btn btn-spinner';
+  btn.innerHTML = 'Active <span class="spinner"></span>';
+  btn.addEventListener('click', ()=> handleEmoteClick(btn, id));
+  box.appendChild(p); box.appendChild(btn);
+  return box;
+}
+
+function showToast(msg,type='info',duration=2200){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (type==='success'?'success':(type==='error'?'error':''));
+  clearTimeout(t._to); t._to = setTimeout(()=>{ t.className='toast'; }, duration);
+}
+
+/* -------------- Admin config (client-side) -------------- */
+/*
+ NOTE:
+ - Admin password kept in JS variable (not rendered in UI). This is client-side only.
+ - For real security move auth to server.
+*/
+const ADMIN_PASSWORD = '11223'; // DO NOT DISPLAY IN UI
+
+function getAdminConfig(){
+  return {
+    apiHost: sessionStorage.getItem('admin_api_host') || 'http://127.0.0.1:5000',
+    emoteEnabled: sessionStorage.getItem('admin_emote_enabled') !== '0',
+    successMsg: sessionStorage.getItem('admin_success_msg') || 'emote request success'
+  };
+}
+function setAdminConfig({apiHost, emoteEnabled, successMsg}){
+  if(apiHost !== undefined) sessionStorage.setItem('admin_api_host', apiHost);
+  if(emoteEnabled !== undefined) sessionStorage.setItem('admin_emote_enabled', emoteEnabled ? '1' : '0');
+  if(successMsg !== undefined) sessionStorage.setItem('admin_success_msg', successMsg);
+}
+
+/* -------------- Populate lists -------------- */
+function populateLists(){
+  const evo = document.getElementById('evo-list');
+  EVO_EMOTES.forEach(it => evo.appendChild(createButton(it[0], it[1])));
+  const normal = document.getElementById('normal-list');
+  NORMAL_EMOTES.forEach(it => normal.appendChild(createButton(it[0], it[1])));
+}
+
+/* -------------- Emote handler (fixed) -------------- */
+async function handleEmoteClick(button, emoteId){
+  if(button.classList.contains('btn-loading')) return;
+
+  const cfg = getAdminConfig();
+  if(!cfg.emoteEnabled){ showToast('Emote disabled by admin','error',2000); return; }
+
+  const tc = (document.getElementById('teamcode')?.value || '').trim();
+  const uid1 = (document.getElementById('uid1')?.value || '').trim();
+  const uid2 = (document.getElementById('uid2')?.value || '').trim();
+  const uid3 = (document.getElementById('uid3')?.value || '').trim();
+  const uids = [uid1, uid2, uid3].filter(u=>u!=='');
+  if(!tc){ showToast('Enter Team Code','error'); return; }
+  if(uids.length===0){ showToast('Enter at least 1 UID','error'); return; }
+
+  let host = (cfg.apiHost || 'http://127.0.0.1:5000').replace(/\/+$/,'');
+  let api = `${host}/join?tc=${encodeURIComponent(tc)}`;
+  if(uids[0]) api += `&uid1=${encodeURIComponent(uids[0])}`;
+  if(uids[1]) api += `&uid2=${encodeURIComponent(uids[1])}`;
+  if(uids[2]) api += `&uid3=${encodeURIComponent(uids[2])}`;
+  api += `&emote_id=${encodeURIComponent(String(emoteId))}`;
+
+  button.classList.add('btn-loading'); button.style.transform='scale(0.98)';
+
+  try{
+    const res = await fetch(api, { method:'GET', cache:'no-store' });
+    let raw = '', parsed = null;
+    try{ raw = await res.text(); parsed = raw ? JSON.parse(raw) : null; }catch(e){ parsed = null; }
+
+    if(!res.ok){
+      const msg = (parsed && parsed.message) ? parsed.message : `Request failed (${res.status})`;
+      console.error('API error:', res.status, raw);
+      showToast(msg, 'error', 3000);
+    } else {
+      if(parsed && parsed.status === 'success'){
+        const finalMsg = (cfg && cfg.successMsg) ? cfg.successMsg : (parsed.message || 'Emote performed successfully!');
+        showToast(finalMsg, 'success', 1600);
+      } else {
+        // success http-wise but server returned non-standard body; show server message if any else admin msg
+        const finalMsg = (parsed && parsed.message) ? parsed.message : ((cfg && cfg.successMsg) ? cfg.successMsg : 'Emote request sent');
+        showToast(finalMsg, 'success', 1400);
+        console.info('Server response:', raw);
+      }
+    }
+  }catch(err){
+    console.error('Fetch/network error:', err);
+    showToast('Emote request fail — check server or network', 'error', 2800);
+  }finally{
+    button.classList.remove('btn-loading'); button.style.transform='';
+  }
+}
+
+/* -------------- Login (developer) -------------- */
+function doLogin(){
+  const u = (document.getElementById('login-user')?.value || '').trim();
+  const p = (document.getElementById('login-pass')?.value || '').trim();
+  if(u === '123' && p === '123'){
+    const loginScreen = document.getElementById('login-screen');
+    const appEl = document.getElementById('app');
+    if(loginScreen) loginScreen.style.display='none';
+    if(appEl) appEl.setAttribute('aria-hidden','false');
+    sessionStorage.setItem('KEVIN TAAKE 🇰🇮_developer_auth','1');
+    showToast('Welcome KEVIN TAAKE 🇰🇮_developer','success',1400);
+    updateAdminButtonState();
+  } else {
+    if(confirm('Wrong username or password. Get user/pass from our Telegram channel now?')){
+      window.open('https://t.me/FreeFireLikeOfficialChannel','_blank');
+    } else {
+      showToast('Wrong credentials','error',1600);
+    }
+  }
+}
+
+/* -------------- Admin modal logic -------------- */
+function openAdminModal(){
+  const modal = document.getElementById('admin-modal');
+  modal.style.display='flex'; modal.setAttribute('aria-hidden','false');
+  if(sessionStorage.getItem('admin_auth') === '1') showAdminControls(); else showAdminLogin();
+}
+function closeAdminModal(){ const modal = document.getElementById('admin-modal'); modal.style.display='none'; modal.setAttribute('aria-hidden','true'); }
+function showAdminLogin(){ document.getElementById('admin-login-area').style.display='block'; document.getElementById('admin-controls').style.display='none'; }
+function showAdminControls(){
+  document.getElementById('admin-login-area').style.display='none';
+  document.getElementById('admin-controls').style.display='block';
+  const cfg = getAdminConfig();
+  document.getElementById('admin-api-host').value = cfg.apiHost;
+  document.getElementById('admin-enable-emote').checked = !!cfg.emoteEnabled;
+  document.getElementById('admin-success-msg').value = cfg.successMsg;
+  updateAdminButtonState();
+}
+function updateAdminButtonState(){
+  const btn = document.getElementById('admin-open-btn');
+  if(sessionStorage.getItem('admin_auth') === '1') btn.classList.add('logged'); else btn.classList.remove('logged');
+}
+
+/* -------------- Event bindings -------------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  // populate emote lists
+  populateLists();
+
+  // login
+  document.getElementById('login-btn').addEventListener('click', doLogin);
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Enter' && document.getElementById('login-screen').style.display!=='none') doLogin(); });
+
+  // admin panel toggle
+  document.getElementById('admin-open-btn').addEventListener('click', ()=>{
+    if(sessionStorage.getItem('KEVIN TAAKE 🇰🇮_developer_auth') !== '1'){ showToast('Please login as developer first','error',1600); return; }
+    openAdminModal();
+  });
+
+  // admin login button
+  document.getElementById('admin-login-btn').addEventListener('click', ()=>{
+    const pass = (document.getElementById('admin-pass').value || '');
+    if(pass === ADMIN_PASSWORD){
+      sessionStorage.setItem('admin_auth','1'); showToast('Admin logged in','success',1200); showAdminControls();
+    } else { showToast('Invalid admin password','error',1600); }
+  });
+
+  // admin save
+  document.getElementById('admin-save-btn').addEventListener('click', ()=>{
+    const host = (document.getElementById('admin-api-host').value || '').trim();
+    const enabled = !!document.getElementById('admin-enable-emote').checked;
+    const msg = (document.getElementById('admin-success-msg').value || '').trim() || 'এটা ফিক্সড করে দিলাম';
+    setAdminConfig({apiHost: host, emoteEnabled: enabled, successMsg: msg});
+    showToast('Admin settings saved','success',1200);
+    updateAdminButtonState();
+  });
+
+  // admin logout
+  document.getElementById('admin-logout-btn').addEventListener('click', ()=>{
+    sessionStorage.removeItem('admin_auth'); showToast('Admin logged out','success',1200); showAdminLogin(); updateAdminButtonState();
+  });
+
+  // close modal by clicking outside
+  document.getElementById('admin-modal').addEventListener('click', (ev)=>{ if(ev.target && ev.target.id === 'admin-modal') closeAdminModal(); });
+
+  // if already logged-in hide login
+  if(sessionStorage.getItem('KEVIN TAAKE 🇰🇮_developer_auth') === '1'){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').setAttribute('aria-hidden','false');
+  }
+  updateAdminButtonState();
+});
+
+/* optional: expose small debug helper on console */
+// window._adminConfig = getAdminConfig;
+</script>
+</body>
+</html>
